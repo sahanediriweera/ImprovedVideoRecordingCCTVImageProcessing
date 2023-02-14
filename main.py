@@ -3,6 +3,8 @@ import cv2
 import time
 from datetime import datetime
 import os
+import ImageDifference
+import SafetyDetection
 
 
 def get_Video_Capture_and_Write(vsource,outputname):
@@ -22,21 +24,25 @@ def getFileName():
     return dt_value
 
 
-def run(vsource = 0,outputname = "output",threshold = 1000,timerlevel = 60):
-    
+def run(vsource = 0,outputname = "output",threshold = 1000,timerlevel = 60,reference_image = ""):
+    IDif = ImageDifference(reference_image,threshold,timerlevel)
+    SD = SafetyDetection()
     cap,video_writer = get_Video_Capture_and_Write(vsource= vsource,outputname=outputname)
     while cap.isOpened():
         try:
             ret, frame = cap.read()
-            if(True):
+            if(IDif.difference(frame)):
                 video_writer.write(frame)
-            if(True):
+            if(SD.fireDetection(frame)):
                 print("Send Email")
-
+            if(SD.smokeDetection(frame)):
+                print("Send Email")
             if cv2.waitKey(10) & 0xFF == ord('q'):
                 break
         except e:
             break
+    cap.release()
+    video_writer.release()
 
 def parse_opt():
     parser = argparse.ArgumentParser()
@@ -44,6 +50,7 @@ def parse_opt():
     parser.add_argument("--outputname",default= "output",help= "Enter the name of the file name ")
     parser.add_argument("--threshold",nargs= '+',type= int,help= "Enter the threshold value")
     parser.add_argument("--timerlevel",nargs= '+',type=int,help= "Enter the timer level to compare")
+    parser.add_argument("--reference",default="",help="Enter the address of the reference image")
     opt = parser.parse_args()
     return opt
 
