@@ -11,8 +11,8 @@ def getFileName():
     return dt_value
 
 
-def run(vsource = 0,outputname = "output",threshold = 1000):
-
+def run(vsource = 0,outputname = "output",threshold = 1000,timerlevel = 60):
+    
     cap = cv2.VideoCapture(vsource)
     height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
     width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
@@ -21,15 +21,13 @@ def run(vsource = 0,outputname = "output",threshold = 1000):
     outputname = getFileName() if outputname == "output" else outputname
     video_writer = cv2.VideoWriter(os.path.join("Recordings","{}.avi".format(outputname)),fourcc,fps,(width,height))
 
-
     while cap.isOpened():
         try:
             ret, frame = cap.read()
             if(True):
                 video_writer.write(frame)
-            if((True) OR (True)):
-                print(True)
-                /**/
+            if((True)OR(True)):
+                print("Send Email")
 
             if cv2.waitKey(10) & 0xFF == ord('q'):
                 break
@@ -44,6 +42,7 @@ def parse_opt():
     parser.add_argument("--vsource",nargs= '+',type= int,help= "Enter the Video camara value")
     parser.add_argument("--outputname",default= "output",help= "Enter the name of the file name ")
     parser.add_argument("--threshold",nargs= '+',type= int,help= "Enter the threshold value")
+    parser.add_argument("--timerlevel",nargs= '+',type=int,help= "Enter the timer level to compare")
     opt = parser.parse_args()
     return opt
 
