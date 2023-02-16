@@ -45,6 +45,7 @@ class ImageDifference():
         now_time = time.time()
         time_diff = now_time - self.last_time
         if(time_diff>self.timerlevel):
+            self.set_last_time()
             return True
         else:
             return False
