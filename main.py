@@ -1,20 +1,16 @@
 import argparse
 import cv2
-import time
 from datetime import datetime
 import os
-import ImageDifference
-import SafetyDetection
+from ImageDifference import ImageDifference
+from SafetyDetection import fireDetection,smokeDetection
 
 
-def get_Video_Capture_and_Write(vsource,outputname):
-    cap = cv2.VideoCapture(vsource)
-    height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-    width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
-    fps = int(cap.get(cv2.CAP_PROP_FPS))
-    fourcc = cv2.VideoWriter_fourcc('P','I','M','1')
+def get_Video_Capture_and_Write(outputname):
     outputname = getFileName() if outputname == "output" else outputname
-    video_writer = cv2.VideoWriter(os.path.join("Recordings","{}.avi".format(outputname)),fourcc,fps,(width,height))
+    fourcc = cv2.VideoWriter_fourcc(*'XVID')  # Choose the codec (XVID for .avi format)
+    video_writer = cv2.VideoWriter("output.avi", fourcc, 20.0, (640, 480))  # Create the VideoWriter object
+    cap = cv2.VideoCapture(0)
     return cap,video_writer
 
 
@@ -25,32 +21,37 @@ def getFileName():
 
 
 def run(vsource = 0,outputname = "output",threshold = 1000,timerlevel = 60,reference_image = ""):
-    IDif = ImageDifference(reference_image,threshold,timerlevel)
-    SD = SafetyDetection()
-    cap,video_writer = get_Video_Capture_and_Write(vsource= vsource,outputname=outputname)
-    while cap.isOpened():
-        try:
+    IDif = ImageDifference(reference_image,threshold=float(threshold[0]),timerlevel=timerlevel)
+    fourcc = cv2.VideoWriter_fourcc(*'XVID')  # Choose the codec (XVID for .avi format)
+    video_writer = cv2.VideoWriter("output.avi", fourcc, 20.0, (640, 480))  # Create the VideoWriter object
+    cap = cv2.VideoCapture(vsource)
+    frame_count = 0
+    the_actual_frame_count = 0
+    try:
+        while cap.isOpened():
+        
             ret, frame = cap.read()
-            if(IDif.difference(frame)):
+            cv2.imshow('frame', frame)
+            print(f"The actual frame count {the_actual_frame_count} the current frame count {frame_count}")
+            if IDif.difference(frame):
                 video_writer.write(frame)
-            if(SD.fireDetection(frame)):
-                print("Send Email")
-            if(SD.smokeDetection(frame)):
-                print("Send Email")
+                frame_count +=1
+            the_actual_frame_count+=1
             if cv2.waitKey(10) & 0xFF == ord('q'):
                 break
-        except e:
-            break
-    cap.release()
-    video_writer.release()
+        cap.release()
+        video_writer.release()
+        cv2.destroyAllWindows()
+    except Exception as e:
+        print(e)
 
 def parse_opt():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--vsource",nargs= '+',type= int,help= "Enter the Video camara value")
+    parser.add_argument("--vsource",nargs= '+',type= int,default=0,help= "Enter the Video camara value")
     parser.add_argument("--outputname",default= "output",help= "Enter the name of the file name ")
-    parser.add_argument("--threshold",nargs= '+',type= int,help= "Enter the threshold value")
-    parser.add_argument("--timerlevel",nargs= '+',type=int,help= "Enter the timer level to compare")
-    parser.add_argument("--reference",default="",help="Enter the address of the reference image")
+    parser.add_argument("--threshold",nargs= '+',type= float,default=1000,help= "Enter the threshold value")
+    parser.add_argument("--timerlevel",nargs= '+',type=int,default=60,help= "Enter the timer level to compare")
+    parser.add_argument("--reference_image",default="",help="Enter the address of the reference image")
     opt = parser.parse_args()
     return opt
 

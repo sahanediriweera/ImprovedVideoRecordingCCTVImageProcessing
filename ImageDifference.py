@@ -3,7 +3,7 @@ import cv2
 
 class ImageDifference():
 
-    def capture_image():
+    def capture_image(self):
         cap = cv2.VideoCapture(0)
         ret,frame = cap.read()
         cap.release()
@@ -28,12 +28,13 @@ class ImageDifference():
         self.reference_image = self.getCorrect_Reference_Image(reference_image=reference_image)
         self.threshold = threshold
         self.timerlevel = timerlevel
-        self.last_time = time.now()
+        self.last_time = time.time()
 
     def difference(self,frame):
         image1 = cv2.cvtColor(self.reference_image,cv2.COLOR_BGR2GRAY)
         image2 = cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
         diff = self.getDifference(image1,image2)
+        print(f"got difference {diff}, {self.threshold}")
         if(diff>self.threshold):
             if(self.getTimeDifference()):
                 self.changeFrame(frame=frame)
@@ -51,4 +52,4 @@ class ImageDifference():
             return False
         
     def set_last_time(self):
-        self.last_time = time.now()
+        self.last_time = time.time()
