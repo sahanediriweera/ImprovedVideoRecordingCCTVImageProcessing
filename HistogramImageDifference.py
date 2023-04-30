@@ -1,8 +1,8 @@
 import time
 import cv2
-from skimage.metrics import compare_ssim
+from Difference import Difference
 
-class ImageDifference():
+class ImageHistogramDifference(Difference):
 
     def capture_image(self):
         cap = cv2.VideoCapture(0)
@@ -55,19 +55,19 @@ class ImageDifference():
     def set_last_time(self):
         self.last_time = time.time()
 
-    def ssi(self,frame):
-        image1 = cv2.cvtColor(self.reference_image,cv2.COLOR_BGR2GRAY)
-        image2 = cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
-        diff = compare_ssim(image1,image2, multichannel=True)
-        print(f"got difference {diff}, {self.threshold}")
-        if(diff>self.threshold):
-            if(self.getTimeDifference()):
-                self.changeFrame(frame=frame)
-            return True
-        else:
-            return False
+    # def ssi(self,frame):
+    #     image1 = cv2.cvtColor(self.reference_image,cv2.COLOR_BGR2GRAY)
+    #     image2 = cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
+    #     diff = compare_ssim(image1,image2, multichannel=True)
+    #     print(f"got difference {diff}, {self.threshold}")
+    #     if(diff>self.threshold):
+    #         if(self.getTimeDifference()):
+    #             self.changeFrame(frame=frame)
+    #         return True
+    #     else:
+    #         return False
         
-    def histogram_based_difference(self,frame):
+    def difference(self,frame):
         image1 = cv2.cvtColor(self.reference_image,cv2.COLOR_BGR2GRAY)
         image2 = cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
         hist1 = cv2.calcHist([image1], [0], None, [256], [0, 256])
