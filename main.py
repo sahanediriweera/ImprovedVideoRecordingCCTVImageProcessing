@@ -33,7 +33,7 @@ def run(vsource = 0,outputname = "output",threshold = 1000,timerlevel = 60,refer
             ret, frame = cap.read()
             cv2.imshow('frame', frame)
             print(f"The actual frame count {the_actual_frame_count} the current frame count {frame_count}")
-            if IDif.difference(frame):
+            if IDif.ssi(frame):
                 video_writer.write(frame)
                 frame_count +=1
             the_actual_frame_count+=1
