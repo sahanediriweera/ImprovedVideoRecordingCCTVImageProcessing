@@ -57,8 +57,8 @@ def run(vsource = 0,outputname = "output",threshold = 1000,timerlevel = 60,refer
             IDif = ImageHistogramDifference(reference_image,threshold=threshold,timerlevel=timerlevel)
         else:
             IDif = ImagePixelDifference(reference_image,threshold=threshold,timerlevel=timerlevel)
-        fourcc = cv2.VideoWriter_fourcc(*'XVID')  # Choose the codec (XVID for .avi format)
-        video_writer = cv2.VideoWriter("{}.avi".format(outputname), fourcc, 20.0, (640, 480))  # Create the VideoWriter object
+        fourcc = cv2.VideoWriter_fourcc(*'XVID')  
+        video_writer = cv2.VideoWriter("{}.avi".format(outputname), fourcc, 20.0, (640, 480))
         cap = cv2.VideoCapture(vsource)
         frame_count = 0
         the_actual_frame_count = 0
