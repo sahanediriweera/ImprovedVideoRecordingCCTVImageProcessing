@@ -1,2 +1,2 @@
 # ImprovedVideoRecordingCCTVImageProcessing
- 
+This is my project for computer vision and image processing. This is  a program aimed to address the issue of creating unnecessary space for videos. This address this problem by detecting the changes of the scenes. The program is capable of detecting changes and render the videos only on the changes to the scene where the still recording are not recorded.  This has the capability to adapt to different changes to the environment and record accordingly. Furthermore this program can process recorded footage and apply the process of removing unnecessary frames. In addition to that the program can notify the users by send an email when it detect a change in the scene. 
